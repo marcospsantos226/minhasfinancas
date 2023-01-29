@@ -4,6 +4,9 @@ import com.marcosp.minhasfinancas.model.entity.Lancamento;
 import com.marcosp.minhasfinancas.model.enums.StatusLancamento;
 import com.marcosp.minhasfinancas.model.repository.LancamentoRepository;
 import com.marcosp.minhasfinancas.service.LancamentoService;
+import net.bytebuddy.matcher.StringMatcher;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,8 +48,13 @@ public class LancamentoServiceImpl implements LancamentoService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Lancamento> buscar(Lancamento lancamentoFiltro) {
-        return null;
+        Example example = Example.of(lancamentoFiltro, ExampleMatcher
+                .matching().withIgnoreCase()
+                .withStringMatcher(ExampleMatcher.StringMatcher));
+
+        return repository.findAll(example);
     }
 
     @Override
