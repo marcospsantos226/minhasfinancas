@@ -12,6 +12,6 @@ public interface UsuarioService {
 	
 	void validarEmail(String email);
 
-	Optional<Usuario> ObterPorId(Long id);
+	Optional<Usuario> obterPorId(Long id);
 
 }
