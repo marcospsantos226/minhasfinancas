@@ -54,9 +54,10 @@ public class LancamentoServiceImpl implements LancamentoService {
     @Override
     @Transactional(readOnly = true)
     public List<Lancamento> buscar(Lancamento lancamentoFiltro) {
-        Example example = Example.of(lancamentoFiltro, ExampleMatcher
-                .matching().withIgnoreCase()
-                .withStringMatcher(ExampleMatcher.StringMatcher));
+        Example example = Example.of(lancamentoFiltro,
+                ExampleMatcher.matching()
+                        .withIgnoreCase()
+                        .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING));
 
         return repository.findAll(example);
     }
@@ -87,7 +88,7 @@ public class LancamentoServiceImpl implements LancamentoService {
             throw new RegraNegocioException("Informe um usuario");
         }
 
-        if (lancamento.getValor() == null || lancamento.getValor().compareTo(BigDecimal.ZERO < 0)) {
+        if (lancamento.getValor() == null || lancamento.getValor().compareTo(BigDecimal.ZERO) < 1) {
             throw new RegraNegocioException("Informe um valor valido");
         }
 

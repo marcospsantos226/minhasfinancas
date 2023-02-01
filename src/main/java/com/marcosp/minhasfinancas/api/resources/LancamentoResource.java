@@ -8,6 +8,7 @@ import com.marcosp.minhasfinancas.model.enums.StatusLancamento;
 import com.marcosp.minhasfinancas.model.enums.TipoLancamento;
 import com.marcosp.minhasfinancas.service.LancamentoService;
 import com.marcosp.minhasfinancas.service.UsuarioService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,15 +17,13 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("api/lancamentos")
+@RequestMapping("/api/lancamentos")
+@RequiredArgsConstructor
 public class LancamentoResource {
 
-    private LancamentoService service;
-    private UsuarioService usuarioService;
+    private final LancamentoService service;
+    private final UsuarioService usuarioService;
 
-    public LancamentoResource(LancamentoService service){
-        this.service = service;
-    }
 
     @GetMapping
     public ResponseEntity buscar(
@@ -42,7 +41,7 @@ public class LancamentoResource {
         Optional<Usuario> usuario= usuarioService.obterPorId(idUsuario);
 
         if(usuario.isPresent()){
-            return ResponseEntity.badRequest().body("Nao foi possivel realizar. Usuario nao encontrado para o Id informado");
+            return ResponseEntity.badRequest().body("Nao foi possivel realizar a consulta. Usuario nao encontrado para o Id informado");
         }else{
             lancamentoFiltro.setUsuario(usuario.get());
         }
@@ -92,11 +91,19 @@ public class LancamentoResource {
         lancamento.setMes(dto.getMes());
         lancamento.setValor(dto.getValor());
 
-        Usuario usuario = usuarioService.obterPorId(dto.getUsuario()).orElseThrow( () -> new RegraNegocioException("Usuario nao encontrado para o id informado"));
-        lancamento.setUsuario(usuario);
-        lancamento.setTipo(TipoLancamento.valueOf(dto.getTipo()));
-        lancamento.setStatus(StatusLancamento.valueOf(dto.getStatus()));
+        Usuario usuario = usuarioService
+                .obterPorId(dto.getUsuario())
+                .orElseThrow( () -> new RegraNegocioException("Usuario nao encontrado para o id informado"));
 
+        lancamento.setUsuario(usuario);
+
+        if(dto.getTipo() != null) {
+            lancamento.setTipo(TipoLancamento.valueOf(dto.getTipo()));
+        }
+
+        if(dto.getStatus() != null){
+            lancamento.setStatus(StatusLancamento.valueOf(dto.getStatus()));
+        }
         return lancamento;
 
     }
