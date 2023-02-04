@@ -38,7 +38,7 @@ public class LancamentoRepositoryTest {
         Assertions.assertThat(lancamento.getId()).isNotNull();
     }
 
-    private static Lancamento criarLancamento() {
+    public static Lancamento criarLancamento() {
         return Lancamento.builder()
                 .ano(2019)
                 .mes(1)
